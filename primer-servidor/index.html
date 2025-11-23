@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de servidor Node</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+
+        h1 {
+            color: #333;
+
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>¡Servidor Node.js Funcionando! </h1>
+        <p>Este archivo está siendo servidor por el servidor local</p>
+
+        <h2>Prueba de la API de Tareas</h2>
+        <button onclick="obtenerTareas()"> Ver tareas (GET)</button>
+        <button onclick="crearTarea()">Crear Tarea (POST)</button>
+
+        <div id="resultado"></div>
+    </div>
+    
+
+    <script>
+        const API_URL = 'http://localhost:3002/api/tareas';
+
+        async function obtenerTareas() {
+            try {
+                const response = await fetch(API_URL);
+                const tareas = await response.json(); 
+
+                document.getElementById('resultado').innerHTML = `
+                    <h3>Tareas</h3>
+                    <pre>${JSON.stringify(tareas, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('resultado').innerHTML = `
+                    <p style="color: red;"> Error: ${error.message}</p>
+                    <p>Asegurate de que el servidor en el puerto 3002 esté corriendo </p>
+                `;
+            }
+        } 
+
+
+        async function crearTarea() {
+            try {   
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }, 
+                    body: JSON.stringify({
+                        titulo: 'Tarea creada desde ele navegador'
+                    })
+                }); 
+
+                const tarea = await response.json();
+
+                document.getElementById('resultado').innerHTML = `
+                    <h3>Tarea Creada: </h3>
+                    <pre>${JSON.stringify(tarea, null, 2)}</pre>
+                `;
+            } catch(error) {
+                document.getElementById('resultado').innerHTML = `
+                    <p style="color:red;"> Error: ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
